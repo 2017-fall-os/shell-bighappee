@@ -15,4 +15,6 @@ int tokenCounter(char *bufPtr, char delim);
 void clearBuffer(char *bufferPointer, int bytesRead);
 int stringLength(char *stringPointer);
 int strComp(char *str, char *comp);
+char *strConcat(char *head, char *tail);
+
 #endif // included
