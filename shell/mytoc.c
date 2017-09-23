@@ -91,19 +91,16 @@ int strComp(char *str, char *comp){
       comparablePointer++;
     }
     else{
-      return 1;
+      return 0;
     }
   }
   if(*comparablePointer != '\0'){
-    return 1;
+    return 0;
   }
-  return 0;
+  return 1;
 }
 
-/*concatenates two strings with '/' character between them
 
-char *strConcat(char *head, char *tail){
-}
 
 /*clears the given buffer from previous inputs to ready for next series of inputs*/
 
@@ -127,7 +124,32 @@ int stringLength(char *stringPointer){
    return counter;
 }
 
+/*concatenates two strings with '/' character between them*/
+
+char *strConcat(char *head, char *tail){
+  char *iterator, *retString;
+  int counter=0 , length = stringLength(head);
+  length += stringLength(tail);
+  retString = (char *)malloc(length+1);
+  iterator = head;
+  while (*iterator != 0){
+    retString[counter] = *iterator;
+    iterator++;
+    counter++;
+  }
+  iterator=tail;
+  while (*iterator != 0){
+    retString[counter] = *iterator;
+    iterator++;
+    counter++;
+  }
+  retString[counter] = 0; 
+  return retString;
+}
+
+/*
 void main(){
+  char *target;
   char exitString[] = "exit";
   char pathString[] = "PATH";
   char comparable[] ="PATH";
@@ -141,4 +163,7 @@ void main(){
   printf("%d\n", stringLength(exitString));
   clearBuffer(bad, 5);
   printf("%d\n", stringLength(bad));
+  target = strConcat(exitString, pathString);
+  printf("%d\n", stringLength(target));
 } 
+*/
