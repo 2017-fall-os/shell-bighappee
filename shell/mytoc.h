@@ -12,5 +12,7 @@ mytoc.h
 
 char **mytoc(char *str, char delim);
 int tokenCounter(char *bufPtr, char delim);
-
+void clearBuffer(char *bufferPointer, int bytesRead);
+int stringLength(char *stringPointer);
+int strComp(char *str, char *comp);
 #endif // included

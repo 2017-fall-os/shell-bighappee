@@ -6,7 +6,7 @@ Tokenizer Lab
 
 mytoc.c
 *******************************************************/
-
+#include <stdio.h>
 #include <stdlib.h>                                         // This include is for malloc/calloc/free
 #include "mytoc.h"                                          // for consistency
 
@@ -79,26 +79,66 @@ char **mytoc(char *str, char delim){
   }
   tokenVec[tokenCount] =(char *)0;                                               //point last index of vector to null address space
   return tokenVec;                                                               // return the vector
+}
 
-
-  /*compares two strings (case insensitive) if the same returns 1 else returns 0*/
+/*compares two strings (case sensitive) if the same returns 1 else returns 0*/
 int strComp(char *str, char *comp){
+  char* stringPointer = str;
+  char* comparablePointer = comp;
+  while (*stringPointer !='\0'){
+    if (*stringPointer ==*comparablePointer){
+      stringPointer++;
+      comparablePointer++;
+    }
+    else{
+      return 1;
+    }
+  }
+  if(*comparablePointer != '\0'){
+    return 1;
+  }
   return 0;
 }
 
-/*concatenates two strings with '/' character between them*/
+/*concatenates two strings with '/' character between them
 
 char *strConcat(char *head, char *tail){
 }
 
 /*clears the given buffer from previous inputs to ready for next series of inputs*/
 
- void clearBuffer(char *bufferPointer, int bytesRead){
+void clearBuffer(char *bufferPointer, int bytesRead){
    char *iterator = bufferPointer;
    int counter =0;
    while (counter< bytesRead){
-     *iterator = (char *)0;
+     *iterator = 0;
      counter++;
      iterator++;
    }
- }
+}
+
+int stringLength(char *stringPointer){
+   char *iterator = stringPointer;
+   int counter =0;
+   while(*iterator != 0){
+     counter++;
+     iterator++;
+   }
+   return counter;
+}
+
+void main(){
+  char exitString[] = "exit";
+  char pathString[] = "PATH";
+  char comparable[] ="PATH";
+  char comp[]= "exit";
+  char bad[] = "exits";
+  printf("%d\n", strComp(exitString, comp));
+  printf("%d\n", strComp(pathString, comparable));
+  printf("%d\n", strComp(exitString, bad));
+  printf("%d\n", strComp(bad, comp));
+  printf("%d\n", stringLength(bad));
+  printf("%d\n", stringLength(exitString));
+  clearBuffer(bad, 5);
+  printf("%d\n", stringLength(bad));
+} 
