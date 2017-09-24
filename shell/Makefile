@@ -1,8 +1,8 @@
-all: test
+all: shell
 
 CFLAGS = -g -O2
 
-test: test.o mytoc.o
-	cc -o test test.o mytoc.o
+shell: shell.o mytoc.o
+	cc -o shell shell.o mytoc.o
 clean:
-	rm -f  *.o test test.exe
+	rm -f  *.o shell shell.exe
