@@ -50,37 +50,31 @@ int main(int argc, char **argv, char **envp){
 	  }
 	  else if(rc==0){                                        // fork success
 	    childID =  (int) getpid();
-	    //printf("I am the child process : %d\n", childID);
 	    retVal = execve(myVector[0], &myVector[0], envp);    // attempt execve full path to program given
-	    // printf("%d\n",retVal);
-	      if(retVal!=0){
-		counter =0;
-		while (pathVector[counter] != 0){
+	      if(retVal!=0){                                                   
+		counter =0;                                           
+		while (pathVector[counter] != 0){                                  // append the command to all possible paths
 		  commandString = strConcat(pathVector[counter], slashString);
 		  commandString = strConcat(commandString, myVector[0]);
 		  retVal = execve(commandString, &myVector[0], envp);
 		  counter++;
 		}
-		fprintf(stderr, "command not found\n");
+		fprintf(stderr, "command not found\n");           //failed to find the command, so kill child process, free memory
 		free(commandString);
 		kill(getpid(), SIGUSR1);
 	      }
 	    }
 	    else{                                                // path followed by parent
 
-	      int waitID = wait(&status);
+	      int waitID = wait(&status);                        // parent awaits return from chid process
 	      if(WIFEXITED(status)) {
-		if(WEXITSTATUS(status) !=0){
+		if(WEXITSTATUS(status) !=0){                     //check if child returned abnormally, print error code if so
 		  printf("Program terminated with exit code %d.\n", WEXITSTATUS(status));
 		}
 	      }
-	      //printf("Success : %d\n", waitID);
-
 	    }
 	    clearBuffer(ptrReadBuf, numBytesRead);                 // clear buffer for next read
-	    free(myVector);                                        // free the allocated vector
-	    //	    free(commandString);
-	  
+	    free(myVector);                                        // free the memory allocated by malloc
 	}
 
       }
