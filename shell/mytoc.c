@@ -1,8 +1,8 @@
 /*******************************************************
 Christopher K. Tarango
-9/11/17
+9/24/17
 CS4375
-Tokenizer Lab
+Shell Lab (Part 1)
 
 mytoc.c
 *******************************************************/
@@ -81,7 +81,7 @@ char **mytoc(char *str, char delim){
   return tokenVec;                                                               // return the vector
 }
 
-/*compares two strings (case sensitive) if the same returns 1 else returns 0*/
+/*compares two strings (case sensitive) if the same returns 1(true) else returns 0(false)*/
 int strComp(char *str, char *comp){
   char* stringPointer = str;
   char* comparablePointer = comp;
@@ -100,8 +100,6 @@ int strComp(char *str, char *comp){
   return 1;
 }
 
-
-
 /*clears the given buffer from previous inputs to ready for next series of inputs*/
 
 void clearBuffer(char *bufferPointer, int bytesRead){
@@ -114,6 +112,8 @@ void clearBuffer(char *bufferPointer, int bytesRead){
    }
 }
 
+/*retruns the length of string*/
+
 int stringLength(char *stringPointer){
    char *iterator = stringPointer;
    int counter =0;
@@ -124,7 +124,7 @@ int stringLength(char *stringPointer){
    return counter;
 }
 
-/*concatenates two strings with '/' character between them*/
+/*concatenates two strings with */
 
 char *strConcat(char *head, char *tail){
   char *iterator, *retString;
@@ -147,23 +147,3 @@ char *strConcat(char *head, char *tail){
   return retString;
 }
 
-/*
-void main(){
-  char *target;
-  char exitString[] = "exit";
-  char pathString[] = "PATH";
-  char comparable[] ="PATH";
-  char comp[]= "exit";
-  char bad[] = "exits";
-  printf("%d\n", strComp(exitString, comp));
-  printf("%d\n", strComp(pathString, comparable));
-  printf("%d\n", strComp(exitString, bad));
-  printf("%d\n", strComp(bad, comp));
-  printf("%d\n", stringLength(bad));
-  printf("%d\n", stringLength(exitString));
-  clearBuffer(bad, 5);
-  printf("%d\n", stringLength(bad));
-  target = strConcat(exitString, pathString);
-  printf("%d\n", stringLength(target));
-} 
-*/
