@@ -1,10 +1,10 @@
 /*******************************************************
 Christopher K. Tarango
-9/11/17
+9/24/17
 CS4375
-Tokenizer Lab
+Shell Lab (Part 1)
 
-test.c
+shell.c
 *******************************************************/
 
 #include <stdio.h>                                 // This include is needed for input/output
@@ -21,18 +21,17 @@ test.c
 
 int main(int argc, char **argv, char **envp){
 
-  int numBytesRead, counter, printCounter, tokenCount, exitValue = 0, bufferLen= BUFLEN, childID;
+  int numBytesRead, counter, printCounter, tokenCount, exitValue = 0, bufferLen= BUFLEN, childID, retVal;
   char readBuf[BUFLEN], *ptrReadBuf, *endBuf, **myVector, exitString[]="exit", pathString[]="PATH",
-    **enVector, **pathVector;
+    **enVector, **pathVector,slashString[]="/", *commandString;
   ptrReadBuf= readBuf;
 
   if(argc == 1){                                                 // makes sure no arguments were given when starting program
     for(counter=0; envp[counter] != (char *)0; counter++){
       enVector = mytoc(envp[counter], '=');
       if(strComp(enVector[0], pathString) ==1){
-	printf("path found\n");
+	//	printf("path found\n");
 	pathVector = mytoc(enVector[1],':');
-	}
       }
     }
     while (exitValue == 0){                                      // loop through program till exit condition given
@@ -43,28 +42,41 @@ int main(int argc, char **argv, char **envp){
 	if (tokenCount == 1){                                    // check for exit strin
 	  exitValue = strComp(exitString, myVector[0]);
 	}
-	if (tokenCount >0){
+	if (tokenCount >0){                                      // empty string bypasses code block
 	  if (exitValue ==0){
-	    printf("Token Count : %d\n",tokenCount);
+	    // printf("Token Count : %d\n",tokenCount);
 	    int rc = fork();
 	    if (rc < 0){
 	      fprintf(stderr, "fork failed\n");
 	      exit(1);
 	    }
 	    else if(rc==0){
-	      childID = (int) getpid();
-	   
-	      execvp(myVector[0], myVector);
+	      retVal = execve(myVector[0], &myVector[0], envp);
+	      if(retVal!=0){
+		counter =0;
+		while (pathVector[counter] != 0){
+		  commandString = strConcat(pathVector[counter], slashString);
+		  commandString = strConcat(commandString, myVector[0]);
+		  retVal = execve(commandString, &myVector[0], envp);
+		  counter++;
+		}
+		fprintf(stderr, "command not found\n");
+		clearBuffer(ptrReadBuf, numBytesRead);
+		free(commandString);
+	      }
 	    }
-	    else{
+	    else{                                                // path followed by parent
+
 	      int waitID = wait(NULL);
-	      printf("I am the child %d\n", childID);
-	      printf("We waited, %d\n", waitID);
+	      //      	      printf("Success");
+
 	    }
 	    clearBuffer(ptrReadBuf, numBytesRead);                 // clear buffer for next read
 	    free(myVector);                                        // free the allocated vector
+	    //	    free(commandString);
 	  }
 	}
+
       }
     }
   }
