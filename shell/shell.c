@@ -21,22 +21,27 @@ shell.c
 
 int main(int argc, char **argv, char **envp){
 
-  int numBytesRead, counter, tokenCount, exitValue = 0, bufferLen= BUFLEN, childID, retVal, status;
+  int numBytesRead, counter, tokenCount, exitValue = 0, bufferLen= BUFLEN, childID, retVal, status, writeStatus=0;
   char readBuf[BUFLEN], *ptrReadBuf, **myVector, exitString[]="exit", pathString[]="PATH",
-    **enVector, **pathVector,slashString[]="/", *commandString;
+    **enVector, **pathVector,slashString[]="/", *commandString, ps1String[]="PS1";
   ptrReadBuf= readBuf;
 
   if(argc == 1){                                                 // makes sure no arguments were given when starting program
     for(counter=0; envp[counter] != (char *)0; counter++){
       enVector = mytoc(envp[counter], '=');                      // tokenize environment 
+      if(strComp(enVector[0], ps1String) == 1 && enVector[1]==NULL){
+	  writeStatus=1;
+      }
       if(strComp(enVector[0], pathString) ==1){                  // find the path variable
 	pathVector = mytoc(enVector[1],':');                     // tokenize path variable
       }
     }
+
     while (exitValue == 0){                                      // loop through program till exit condition given
-      assert(2==write(1,"$ ",2));                                // print the prompt
+      if(writeStatus==0){
+	assert(2==write(1,"$ ",2));                                // print the prompt
+      }
         numBytesRead = read(0, ptrReadBuf, bufferLen);           // read into the buffer
-	//	printf("Bytes Read = %d\n", numBytesRead);
 	if (numBytesRead==0 || *ptrReadBuf == EOF){
 	  exitValue =1;
 	}
