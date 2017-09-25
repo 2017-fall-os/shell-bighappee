@@ -37,7 +37,7 @@ int main(int argc, char **argv, char **envp){
       assert(2==write(1,"$ ",2));                                // print the prompt
         numBytesRead = read(0, ptrReadBuf, bufferLen);           // read into the buffer
 	//	printf("Bytes Read = %d\n", numBytesRead);
-	if (numBytesRead==0|| *ptrReadBuf == EOF){
+	if (numBytesRead==0 || *ptrReadBuf == EOF){
 	  exitValue =1;
 	}
 	else{
@@ -75,7 +75,7 @@ int main(int argc, char **argv, char **envp){
 	      int waitID = wait(&status);                        // parent awaits return from chid process
 	      if(WIFEXITED(status)) {
 		if(WEXITSTATUS(status) !=0){                     //check if child returned abnormally, print error code if so
-		  printf("Program terminated with exit code %d.\n", WEXITSTATUS(status));
+		  fprintf(stderr,"Program terminated with exit code %d.\n", WEXITSTATUS(status));
 		}
 	      }
 	    }
