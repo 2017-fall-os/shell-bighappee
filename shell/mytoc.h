@@ -2,7 +2,7 @@
 Christopher K. Tarango
 9/24/17
 CS4375
-Shell Lab
+Shell Lab (Part 1)
 
 mytoc.h
 *******************************************************/
