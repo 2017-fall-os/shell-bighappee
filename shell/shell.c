@@ -35,11 +35,17 @@ int main(int argc, char **argv, char **envp){
     }
     while (exitValue == 0){                                      // loop through program till exit condition given
       assert(2==write(1,"$ ",2));                                // print the prompt
-      assert(numBytesRead = read(0, ptrReadBuf, bufferLen));{    // read into the buffer
-	tokenCount = tokenCounter(ptrReadBuf, ' ');
-	myVector = mytoc(ptrReadBuf, ' ');                       // call to the mytoc function 
-	if (tokenCount == 1){                                    // check for exit string
-	  exitValue = strComp(exitString, myVector[0]);
+        numBytesRead = read(0, ptrReadBuf, bufferLen);           // read into the buffer
+	//	printf("Bytes Read = %d\n", numBytesRead);
+	if (numBytesRead==0|| *ptrReadBuf == EOF){
+	  exitValue =1;
+	}
+	else{
+	  tokenCount = tokenCounter(ptrReadBuf, ' ');
+	  myVector = mytoc(ptrReadBuf, ' ');                       // call to the mytoc function 
+	  if (tokenCount == 1){                                    // check for exit string
+	    exitValue = strComp(exitString, myVector[0]);
+	  }
 	}
 	if (tokenCount > 0 && exitValue == 0){                   // empty string or exit value bypasses code block
 
@@ -76,8 +82,6 @@ int main(int argc, char **argv, char **envp){
 	    clearBuffer(ptrReadBuf, numBytesRead);                 // clear buffer for next read
 	    free(myVector);                                        // free the memory allocated by malloc
 	}
-
-      }
     }
   }
   else{
