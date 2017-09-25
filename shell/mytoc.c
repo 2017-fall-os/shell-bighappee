@@ -124,7 +124,7 @@ int stringLength(char *stringPointer){
    return counter;
 }
 
-/*concatenates two strings with */
+/*concatenates two strings, allocates memory and returns the two strings concatenated */
 
 char *strConcat(char *head, char *tail){
   char *iterator, *retString;
