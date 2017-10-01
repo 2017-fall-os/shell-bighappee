@@ -21,9 +21,18 @@ shell.c
 
 int main(int argc, char **argv, char **envp){
 
-  int numBytesRead, counter, tokenCount, exitValue = 0, bufferLen= BUFLEN, childID, retVal, status, writeStatus=0;
-  char readBuf[BUFLEN], *ptrReadBuf, **myVector, exitString[]="exit", pathString[]="PATH",
-    **enVector, **pathVector,slashString[]="/", *commandString, ps1String[]="PS1";
+  int numBytesRead, bufferLen= BUFLEN, childID, retVal;
+  /*Status Values*/
+  int  status, exitValue = 0, writeStatus=0;
+  /*Counters*/
+  int  counter, tokenCount, pipeCount;
+  /*Pointers and Buffer*/
+  char readBuf[BUFLEN], *ptrReadBuf, *commandString;
+  /*Vectors*/
+  char **myVector, **pathVector, **enVector;
+  /*String Constants*/
+  char slashString[]="/", exitString[]="exit", pathString[]="PATH", ps1String[]="PS1", pipeString[]="|";
+
   ptrReadBuf= readBuf;
 
   if(argc == 1){                                                 // makes sure no arguments were given when starting program
@@ -36,29 +45,29 @@ int main(int argc, char **argv, char **envp){
 	pathVector = mytoc(enVector[1],':');                     // tokenize path variable
       }
     }
-
+    free(enVector);                                              //needed values found from enVector so free it
     while (exitValue == 0){                                      // loop through program till exit condition given
       if(writeStatus==0){
-	assert(2==write(1,"$ ",2));                                // print the prompt
+	assert(2==write(1,"$ ",2));                                // print the prompt if not supressed
       }
-        numBytesRead = read(0, ptrReadBuf, bufferLen);           // read into the buffer
-	if (numBytesRead==0 || *ptrReadBuf == EOF){
-	  exitValue =1;
-	}
-	else{
-	  tokenCount = tokenCounter(ptrReadBuf, ' ');
-	  myVector = mytoc(ptrReadBuf, ' ');                       // call to the mytoc function 
-	  if (tokenCount == 1){                                    // check for exit string
-	    exitValue = strComp(exitString, myVector[0]);
-	  }
-	}
-	if (tokenCount > 0 && exitValue == 0){                   // empty string or exit value bypasses code block
 
-	  int rc = fork();                                       // attempt to fork
-	  if (rc < 0){                                           // fork failed
-	    fprintf(stderr, "fork failed\n");
-	    exit(1);
-	  }
+      numBytesRead = read(0, ptrReadBuf, bufferLen);           // read into the buffer
+      if (numBytesRead==0 || *ptrReadBuf == EOF){
+	  exitValue =1;
+      }
+      else{
+	tokenCount = tokenCounter(ptrReadBuf, ' ');
+	myVector = mytoc(ptrReadBuf, ' ');                       // call to the mytoc function 
+	if (tokenCount == 1){                                    // check for exit string
+	  exitValue = strComp(exitString, myVector[0]);    
+	}
+      }
+      if (tokenCount > 0 && exitValue == 0){                   // empty string or exit value bypasses code block
+	int rc = fork();                                       // attempt to fork
+	if (rc < 0){                                           // fork failed
+	   fprintf(stderr, "fork failed\n");
+	   exit(1);
+        }
 	  else if(rc==0){                                        // fork success
 	    childID =  (int) getpid();
 	    retVal = execve(myVector[0], &myVector[0], envp);    // attempt execve full path to program given
@@ -93,5 +102,6 @@ int main(int argc, char **argv, char **envp){
     assert(42==write(2,"An illegal number of arguments were given\n", 42));
     return -1;
   }
+  free(pathVector);
   return 0;
 }
