@@ -22,7 +22,7 @@ int main(int argc, char **argv, char **envp){
 
   int numBytesRead, bufferLen= BUFLEN, childID, retVal;
   /*Status Values*/
-  int  status, exitValue = 0, writeStatus=0, cdValue;
+  int  status, exitValue = 0, writeStatus=0, cdValue, bgstatus=0;
   /*Counters*/
   int  counter, tokenCount, pipeCount;
   /*Pointers and Buffer*/
@@ -30,7 +30,8 @@ int main(int argc, char **argv, char **envp){
   /*Vectors*/
   char **myVector, **pathVector, **enVector;
   /*String Constants*/
-  char slashString[]="/", exitString[]="exit", pathString[]="PATH", ps1String[]="PS1", pipeString[]="|", cdString[]="cd" ;
+  char slashString[]="/", exitString[]="exit", pathString[]="PATH",
+    ps1String[]="PS1", pipeString[]="|", cdString[]="cd", ampString[]="&";
 
 
   /*Initialization process*/
@@ -80,8 +81,14 @@ int main(int argc, char **argv, char **envp){
 	      int cderror =chdir(commandString);
 	      if(cderror != 0){
 		fprintf(stderr, "chdir has failed with error code : %d\n", cderror);
-	      }	      
+	      }
+	      free(commandString);
+	      clearBuffer(directoryPtr, sizeof(directoryBuf));
 	    }
+	  }
+	  bgstatus = strComp(ampString, myVector[tokenCount-1]);  
+	  if (bgstatus ==1){
+	    myVector[tokenCount-1] =NULL;
 	  }
 	}	
       }
@@ -92,6 +99,10 @@ int main(int argc, char **argv, char **envp){
 	   exit(1);
         }
 	  else if(rc==0){                                        // fork success
+            /*if child is to run in background, it's disconnect from parent process group*/
+	    if(bgstatus ==1){
+	      setsid();
+	    }
 	    childID =  (int) getpid();
 	    retVal = execve(myVector[0], &myVector[0], envp);    // attempt execve full path to program given
 	      if(retVal!=0){                                                   
@@ -108,11 +119,21 @@ int main(int argc, char **argv, char **envp){
 	      }
 	    }
 	    else{                                                // path followed by parent
-
-	      int waitID = wait(&status);                        // parent awaits return from chid process
-	      if(WIFEXITED(status)) {
-		if(WEXITSTATUS(status) !=0){                     //check if child returned abnormally, print error code if so
-		  fprintf(stderr,"Program terminated with exit code %d.\n", WEXITSTATUS(status));
+	      if(bgstatus==1){
+		if(0!=waitpid(0,&status,WNOHANG)){
+		  if(WIFEXITED(status)) {
+		    if(WEXITSTATUS(status) !=0){                     //check if child returned abnormally, print error code if so
+		      fprintf(stderr,"Program terminated with exit code %d.\n", WEXITSTATUS(status));
+		    }
+		  }
+		}
+	      }
+	      else{
+		int waitID = wait(&status);                        // parent awaits return from chid process
+		if(WIFEXITED(status)) {
+		  if(WEXITSTATUS(status) !=0){                     //check if child returned abnormally, print error code if so
+		    fprintf(stderr,"Program terminated with exit code %d.\n", WEXITSTATUS(status));
+		  }
 		}
 	      }
 	    }
