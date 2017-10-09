@@ -1,7 +1,7 @@
 Christopher K. Tarango
 
-September 24, 2017
-Shell Lab (Part 1)
+October 1, 2017
+Shell Lab (Part 2)
 README.md
 
 Synopsis:
@@ -13,8 +13,7 @@ Usage:
 ./shell
 
 Notes: 
-
-Currentl doesn't play nicely with the testShell.sh
+Special thanks to Adrian Veliz for providing guidance that makes this program even so what functional and able to play nice with the testShell script. No implementation of pipe was successful and has been omitted from the program. Redirect was not attempted due to time constraints. Shell suffers from an inability to handle multiple lines of input at once. The bash shell prints the first line to the terminal, processes, then prints the next line to the terminal. I have been unable to figure out a way to suppress the printing of all lines after the first while the first executes. I believe this is where the failure in multiple cases of the test script lies. I attempted to use the readline external library to remedy this but the shell acutally failed every test with this implementation. Still a work in progress....
 
 Test Cases:
 
